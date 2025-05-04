@@ -1,11 +1,9 @@
-# votoAppWSServer/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Censo, Voto
 from django.forms.models import model_to_dict
 from django.utils.timezone import now
-from .serializers import VotoSerializer
 
 
 from django.shortcuts import redirect, render
@@ -13,8 +11,9 @@ from .forms import VotoForm, CensoForm, DelVotoForm, GetVotosForm
 from .votoDB import (verificar_censo, registrar_voto,
                             eliminar_voto, get_votos_from_db)
 
-TITLE = '(votoSite)'
 
+
+TITLE = '(votoSite)'
 
 def testbd(request):
 
@@ -62,8 +61,19 @@ def testbd(request):
 
 
 
+#{
+#    "numeroDNI": "94994994D",
+#    "nombre": "Sofia Poza Gracia",
+#    "fechaNacimiento": "06/07/76",
+#    "anioCenso": "2025",
+#    "codigoAutorizacion": "104"
+#}
+
 class CensoView(APIView):
-    def post(self, request, format=None):
+    """Validación de la existencia del votante en el censo"""
+    
+    def post(self, request):
+
         numeroDNI = request.data.get('numeroDNI')
         nombre = request.data.get('nombre')
         fechaNacimiento = request.data.get('fechaNacimiento')
@@ -100,9 +110,18 @@ class CensoView(APIView):
         return Response({'message': 'Datos no encontrados en Censo.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class VotoView(APIView):
-    def post(self, request, format=None):
+    """Emisión y eliminación de un voto"""
+
+    #{
+    #  "censo_id": "94994994D",
+    #  "idProcesoElectoral": "2025",
+    #  "idCircunscripcion": "729",
+    #  "idMesaElectoral": "10",
+    #  "nombreCandidatoVotado": "Pedro"
+    #}
+    
+    def post(self, request):
         voto_form = VotoForm(request.data)
 
         if not voto_form.is_valid():
@@ -142,7 +161,7 @@ class VotoView(APIView):
 
         return Response(voto_dict, status=status.HTTP_200_OK)
 
-    def delete(self, request, id_voto, format=None):
+    def delete(self, request, id_voto=None):
         """Eliminar un voto por ID"""
         if not id_voto:
             return Response({'message': 'ID del voto requerido.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -156,9 +175,13 @@ class VotoView(APIView):
 
 
 class ProcesoElectoralView(APIView):
-    def get(self, request, idProcesoElectoral, format=None):
-        votos = get_votos_from_db(idProcesoElectoral)
-        if votos.exists():
-            serializer = VotoSerializer(votos, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'message': 'No se encontraron votos'}, status=status.HTTP_404_NOT_FOUND)
+    """Consulta de votos por proceso electoral"""
+    def get(self, request, idProcesoElectoral):
+        
+        votos = Voto.objects.filter(idProcesoElectoral=idProcesoElectoral)
+
+        if not votos.exists():
+            return Response({'message': 'No hay votos para este proceso.'}, status=status.HTTP_404_NOT_FOUND)
+
+        votos_list = [model_to_dict(voto) for voto in votos]
+        return Response(votos_list, status=status.HTTP_200_OK)

@@ -8,9 +8,9 @@ import time
 # Configuracion de la base de datos
 db_config = {
     'dbname': 'voto',  # Nombre de la base de datos
-    'user': 'alumnodb',  # Reemplaza con tu usuario de PostgreSQL
-    'password': 'alumnodb',  # Reemplaza con tu contrasegna
-    'host': 'localhost',  # Cambia si el host es diferente
+    'user': 'voto_owner',  # Reemplaza con tu usuario de PostgreSQL
+    'password': 'npg_NuWv4kxi7Brj',  # Reemplaza con tu contrasegna
+    'host': 'ep-wispy-dust-a4im4vjg-pooler.us-east-1.aws.neon.tech',  # Cambia si el host es diferente
     'port': 5432,  # Cambia si tu puerto es diferente
 }
 
