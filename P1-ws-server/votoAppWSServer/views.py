@@ -13,6 +13,8 @@ from .forms import VotoForm, CensoForm, DelVotoForm, GetVotosForm
 from .votoDB import (verificar_censo, registrar_voto,
                             eliminar_voto, get_votos_from_db)
 
+TITLE = '(votoSite)'
+
 
 def testbd(request):
 
@@ -61,11 +63,6 @@ def testbd(request):
 
 
 class CensoView(APIView):
-    """
-    POST /restapiserver/censo/
-     - recibe JSON con los datos necesarios para comprobar en el censo
-     - 200 si existe, 404 si no existe, 400 si JSON inválido
-    """
     def post(self, request, format=None):
         numeroDNI = request.data.get('numeroDNI')
         nombre = request.data.get('nombre')
@@ -105,17 +102,6 @@ class CensoView(APIView):
 
 
 class VotoView(APIView):
-    """
-    POST   /restapiserver/voto/
-      - recibe JSON con datos del voto (incluye campo censo que es el numeroDNI)
-      - 200 + objeto voto registrado si OK
-      - 404 si el censo no existe
-      - 400 en cualquier otro error o JSON inválido
-
-    DELETE /restapiserver/voto/<id_voto>/
-      - elimina voto por su id
-      - 200 si lo borró, 404 si no lo encontró
-    """
     def post(self, request, format=None):
         voto_form = VotoForm(request.data)
 
@@ -170,12 +156,6 @@ class VotoView(APIView):
 
 
 class ProcesoElectoralView(APIView):
-    """
-    GET /restapiserver/procesoelectoral/<idProcesoElectoral>/
-      - lista todos los votos del proceso electoral dado
-      - 200 + lista si hay al menos uno
-      - 404 si no hay ninguno
-    """
     def get(self, request, idProcesoElectoral, format=None):
         votos = get_votos_from_db(idProcesoElectoral)
         if votos.exists():
