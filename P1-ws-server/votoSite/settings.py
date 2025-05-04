@@ -37,7 +37,6 @@ ALLOWED_HOSTS = ['*']
 
 RESTAPIBASEURL = 'http://localhost:8000'
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -144,4 +143,3 @@ CACHES = {
 }
 
 DATABASE_SERVER_URL = os.environ.get("DATABASE_SERVER_URL")
-

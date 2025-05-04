@@ -1,5 +1,5 @@
 """
-URL configuration for votoSite project.
+URL configuration for VotingProj project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -14,12 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import include, path
-
+from django.urls import path
+from votoAppWSServer.views import CensoView, VotoView, ProcesoElectoralView
+from votoAppWSServer import views
 
 urlpatterns = [
-    
-    path('admin/', admin.site.urls),
-    path("restapiserver/", include("votoAppWSServer.urls")),
+    path("censo/", CensoView.as_view(), name="censo"),
+    path("voto/", VotoView.as_view(), name="voto"),
+    path("procesoelectoral/<str:idProcesoElectoral>/", ProcesoElectoralView.as_view(), name="procesoelectoral"),
+    path("voto/<str:id_voto>/", VotoView.as_view(), name="voto"),
+    path('voto/<str:id_voto>/', VotoView.as_view(), name='delvoto'),
+    path('testbd/', views.testbd, name='testbd'),
 ]
